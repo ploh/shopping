@@ -10,7 +10,7 @@
 (def http-port
   45183)
 
-#_
+
 (defn with-system [callback]
   (let [sys (-> (system/system {:jdbc {:adapter "h2"
                                        :url "jdbc:h2:mem:test"}
@@ -22,7 +22,6 @@
       (finally
         (component/stop sys)))))
 
-#_
 (deftest t-add-item
   (with-system
     (fn [{:keys [jdbc]}]

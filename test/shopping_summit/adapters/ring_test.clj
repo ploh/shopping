@@ -40,6 +40,7 @@
     (is (= (deref (get-in context [:filling-cart-impl :store]))
            [:add "abc" item]))))
 
+#_
 (deftest t-delete-from-cart
   (let [name "salt"
         req (-> (mock/request :delete "/cart/abc")

@@ -7,7 +7,6 @@
              [hikari :as hikari]
              [jetty :as jetty]]))
 
-#_
 (defrecord HTTP [port context jetty]
 
   component/Lifecycle
@@ -22,7 +21,6 @@
     (component/stop (:jetty this))
     this))
 
-#_
 (defn system [{:keys [jdbc http]}]
   (component/system-map
     :jdbc (hikari/new-hikari-cp jdbc)
