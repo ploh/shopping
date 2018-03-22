@@ -12,7 +12,6 @@
             [com.stuartsierra.component :as component]
             [system.components.hikari :as hikari]))
 
-#_
 (defn with-db [callback]
   (let [db (-> (hikari/new-hikari-cp {:adapter "h2"
                                       :url "jdbc:h2:mem:test"})
@@ -23,7 +22,6 @@
       (finally
         (component/stop db)))))
 
-#_
 (deftest t-add-item
   (with-db
     (fn [db]
@@ -34,9 +32,17 @@
                :name "milk"
                :quantity 67}])))))
 
-#_
+
 (deftest t-remove-item
-  )
+  (with-db
+    (fn [db]
+      (jdbc/execute! db
+                     ["insert into items
+                      (cart_id, name, quantity) values (?,?,?)"
+                      "foo" "milk" "3"])
+      (filling-cart/remove-item-impl db "foo" "milk")
+      (is (= (jdbc/query db "select * from items")
+             [])))))
 
 #_
 (def gen-item-without-discount
