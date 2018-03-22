@@ -10,24 +10,24 @@
             [shopping-summit.adapters.ring :as ring]
             [shopping-summit.entities.cart :as cart]))
 
-#_
 (defrecord InMemory [store]
   filling-cart/AddItem
   (add-item-impl [this cart-id item]
-    (reset! store [:add cart-id item])))
+    (reset! store [:add cart-id item]))
 
-#_
+  filling-cart/RemoveItem
+  (remove-item-impl [this cart-id item]
+    (reset! store [:remove cart-id item])))
+
 (defn in-memory-carts []
   (->InMemory (atom nil)))
 
-#_
 (deftest t-get-cart
   (let [req (mock/request :get "/cart/abc")
         handler (ring/make-handler {})
         resp (handler req)]
     (is (= (:status resp) 404))))
 
-#_
 (deftest t-post-to-cart
   (let [item {:name "salt"
               :quantity 6}
@@ -39,6 +39,17 @@
     (is (= (:status resp) 201))
     (is (= (deref (get-in context [:filling-cart-impl :store]))
            [:add "abc" item]))))
+
+(deftest t-delete-from-cart
+  (let [name "salt"
+        req (-> (mock/request :delete "/cart/abc")
+                (mock/json-body {:name name}))
+        context {:filling-cart-impl (in-memory-carts)}
+        handler (ring/make-handler context)
+        resp (handler req)]
+    (is (= (:status resp) 200))
+    (is (= (deref (get-in context [:filling-cart-impl :store]))
+           [:remove "abc" name]))))
 
 #_
 (def gen-simple-keyword
